@@ -1,74 +1,95 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
     <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
 </head>
 
 <body>
     <ion-app>
-        <ion-menu content-id="main-content">
-            <ion-header>
-                <ion-toolbar>
-                    <ion-title>Menu Content</ion-title>
-                </ion-toolbar>
-            </ion-header>
-            <ion-content class="ion-padding">Si claro</ion-content>
-        </ion-menu>
-        <div class="ion-page" id="main-content">
+        <ion-router id="ruteo">
+            <ion-route url="/" component="page-home"></ion-route>
+            <ion-route url="/login" component="page-login"></ion-route>
+        </ion-router>
+        <ion-nav></ion-nav>
+        <ion-menu content-id="main-content" id="menu">
             <ion-header>
                 <ion-toolbar>
                     <ion-buttons slot="start">
                         <ion-menu-button></ion-menu-button>
                     </ion-buttons>
-                    <ion-title>Menu</ion-title>
-                </ion-toolbar>
-            </ion-header>
-            <ion-content class="ion-padding"> Tap the button in the toolbar to open the menu. </ion-content>
-        </div>
-        <ion-page class="ion-page">
-            <ion-header>
-                <ion-toolbar>
-                    <ion-title>Header</ion-title>
+                    <ion-title>Menu Content</ion-title>
                 </ion-toolbar>
             </ion-header>
             <ion-content class="ion-padding">
-                <h1>Content</h1>
+                <ion-list>
+                    <ion-item href="/" onclick="cerrarMenu()">
+                        <ion-icon name="home-outline" slot="end"></ion-icon>
+                        <ion-label>Inicio</ion-label>
+                    </ion-item>
+                    <ion-item href="/login" onclick="cerrarMenu()">
+                        <ion-label>Login</ion-label>
+                    </ion-item>
+                </ion-list>
+            </ion-content>
+        </ion-menu>
+        <div class="ion-page" id="main-content"></div>
+        <ion-page class="ion-page" id="page-home">
+            <ion-header>
+                <ion-toolbar>
+                    <ion-buttons slot="start">
+                        <ion-menu-button></ion-menu-button>
+                    </ion-buttons>
+                    <ion-title>Inicio</ion-title>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+                <h1>Inicio</h1>
+            </ion-content>
+        </ion-page>
+        <ion-page class="ion-page" id="page-login">
+            <ion-header>
+                <ion-toolbar>
+                    <ion-buttons slot="start">
+                        <ion-menu-button></ion-menu-button>
+                    </ion-buttons>
+                    <ion-title>Login</ion-title>
+                </ion-toolbar>
+            </ion-header>
+            <ion-content class="ion-padding">
+                <h1>Login</h1>
+                <ion-input label="Nombre de usuario" id="txtNombreUsuario"></ion-input>
+                <ion-input label="Password" id="txtPassword" type="Password"></ion-input>
+                <ion-button id="btnLogin">Login</ion-button>
+                <br>
+                <br>
+                <!-- Prueba para registro -->
+                <h1>Registro</h1>
+                <ion-input label="Nombre de usuario" id="txtUsuarioRegistro"></ion-input>
+                <ion-input label="Password" id="txtPasswordRegistro" type="password"></ion-input>
+                <ion-input label="Codigo Pais" id="txtCodigoPaisRegistro" type="number"></ion-input>
+                <ion-button id="btRegistro">Registrarse</ion-button>
+
+
             </ion-content>
         </ion-page>
     </ion-app>
-    <h1>Registro</h1>
 
-    <input type="text" id="txtNombre" placeholder="Nombre"><br><br>
-    <input type="text" id="txtApellido" placeholder="Apellido"><br><br>
-    <input type="email" id="txtEmail" placeholder="Email"><br><br>
-    <input type="text" id="txtDireccion" placeholder="Dirección"><br><br>
-    <input type="password" id="txtPass" placeholder="Password"><br><br>
+    <input type="button" id="btnProductos" value="Listar Productos" />
+</body>
 
-    <button id="btnRegistro">Registrarse</button>
-
-    <hr>
-
-    <h1>Login</h1>
-
-    <input type="email" id="txtEmailLogin" placeholder="Email"><br><br>
-    <input type="password" id="txtPassLogin" placeholder="Password"><br><br>
-
-    <button id="btnLogin">Login</button>
-
-    <hr>
-
-    <h3 id="mensaje"></h3>
-    </div>
+</html>
 
 
 
-    <script src="JS/codigo.js"></script>
+
+
+<script src="JS/codigo.js"></script>
 </body>
 
 </html>
