@@ -10,9 +10,6 @@ function inicio() {
   ruteo.addEventListener("ionRouteWillChange", navegar);
   document.querySelector("#btnLogin").addEventListener("click", login);
   document.querySelector("#btRegistro").addEventListener("click", registrarUsuario);
-
-  const btnProd = document.querySelector("#btnProductos");
-  if (btnProd) btnProd.addEventListener("click", obtenerProductos);
 }
 
 function cerrarMenu() {
@@ -26,15 +23,20 @@ function navegar(evt) {
   switch (paginaDestino) {
     case "/":
       document.querySelector("#page-home").style.display = "block";
+      obtenerPeliculas();
+      break;
+
+    case "/mapa":
+      document.querySelector("#page-mapa").style.display = "block";
+      setTimeout(() => inicializarMapa(), 200);
       break;
 
     case "/login":
       document.querySelector("#page-login").style.display = "block";
       break;
 
-    case "/mapa":
-      document.querySelector("#page-mapa").style.display = "block";
-      setTimeout(() => inicializarMapa(), 200);
+    case "/registro":
+      document.querySelector("#page-registro").style.display = "block";
       break;
 
     default:
@@ -93,33 +95,64 @@ async function login() {
 document.querySelector("#btnCerrarSesion").addEventListener("click", cerrarSesion)
 
 function cerrarSesion() {
-    localStorage.removeItem("token");
-  
+  localStorage.removeItem("token");
+  mostrarMensaje("Se cerro la sesion")
 }
 
 
-// OBTENER PELICULAS     TODO!
-async function obtenerProductos() {
+// OBTENER PELICULAS     TO DO!
+async function obtenerPeliculas() {
+
   try {
     let token = localStorage.getItem("token");
+
     if (token) {
-      let response = await fetch(`${urlBase}/productos`, {
+      let response = await fetch(`${urlBase}/peliculas`, {
         headers: {
           "Content-Type": "application/json",
-          "x-auth": token,
+          "Authorization": `Bearer ${token}`
         },
       });
-      let datosProductos = await response.json();
+
+      let datosPeliculas = await response.json();
+
       if (response.status == 401) {
-        console.log("Debes iniciar sesiòn nuevamente");
+        console.log("Debes iniciar sesion nuevamente");
       } else {
-        console.log(datosProductos.data);
+        const lista = datosPeliculas.peliculas || [];
+        mostrarPeliculas(lista);
+
       }
     } else {
       console.log("Debes iniciar sesión");
     }
   } catch (error) { }
 }
+
+/* MOSTRAR PELICULAS */
+
+function mostrarPeliculas(peliculas) {
+  if (!Array.isArray(peliculas)) return;
+
+  let contenedor = document.querySelector("#page-home ion-content");
+  contenedor.innerHTML = "";
+
+  peliculas.forEach((pelicula) => {
+    contenedor.innerHTML += `
+      <ion-card>
+        <img src="https://ionicframework.com/docs/img/demos/card-media.png" />
+        <ion-card-header>
+          <ion-card-title>${pelicula.nombre}</ion-card-title>
+          <ion-card-subtitle>${pelicula.idCategoria}</ion-card-subtitle>
+        </ion-card-header>
+        <ion-card-content>
+          ${pelicula.fechaEstreno}
+        </ion-card-content>
+      </ion-card>
+    `;
+  });
+}
+
 
 // REGISTRO
 async function registrarUsuario() {
