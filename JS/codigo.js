@@ -89,7 +89,16 @@ async function login() {
   }
 }
 
-// PRODUCTOS
+//LOGOUT
+document.querySelector("#btnCerrarSesion").addEventListener("click", cerrarSesion)
+
+function cerrarSesion() {
+    localStorage.removeItem("token");
+  
+}
+
+
+// OBTENER PELICULAS     TODO!
 async function obtenerProductos() {
   try {
     let token = localStorage.getItem("token");
@@ -109,7 +118,7 @@ async function obtenerProductos() {
     } else {
       console.log("Debes iniciar sesión");
     }
-  } catch (error) {}
+  } catch (error) { }
 }
 
 // REGISTRO
