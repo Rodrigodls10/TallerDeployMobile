@@ -7,17 +7,27 @@
     <script type="module" src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.esm.js"></script>
     <script nomodule src="https://cdn.jsdelivr.net/npm/@ionic/core/dist/ionic/ionic.js"></script>
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
     <title>Document</title>
+
 </head>
 
 <body>
     <ion-app>
+        <!-- Ruteo -->
         <ion-router id="ruteo">
             <ion-route url="/" component="page-home"></ion-route>
             <ion-route url="/login" component="page-login"></ion-route>
+            <ion-route url="/mapa" component="page-mapa"></ion-route>
         </ion-router>
+
+        <!-- Nav -->
         <ion-nav></ion-nav>
         <ion-menu content-id="main-content" id="menu">
+
+            <!-- Header -->
             <ion-header>
                 <ion-toolbar>
                     <ion-buttons slot="start">
@@ -26,6 +36,7 @@
                     <ion-title>Menu Content</ion-title>
                 </ion-toolbar>
             </ion-header>
+
             <ion-content class="ion-padding">
                 <ion-list>
                     <ion-item href="/" onclick="cerrarMenu()">
@@ -35,9 +46,14 @@
                     <ion-item href="/login" onclick="cerrarMenu()">
                         <ion-label>Login</ion-label>
                     </ion-item>
+                    <ion-item href="/mapa" onclick="cerrarMenu()">
+                        <ion-label>Mapa</ion-label>
+                    </ion-item>
                 </ion-list>
             </ion-content>
         </ion-menu>
+
+        <!-- Main -->
         <div class="ion-page" id="main-content"></div>
         <ion-page class="ion-page" id="page-home">
             <ion-header>
@@ -48,10 +64,13 @@
                     <ion-title>Inicio</ion-title>
                 </ion-toolbar>
             </ion-header>
+
             <ion-content class="ion-padding">
                 <h1>Inicio</h1>
             </ion-content>
         </ion-page>
+
+        <!-- Login -->
         <ion-page class="ion-page" id="page-login">
             <ion-header>
                 <ion-toolbar>
@@ -61,6 +80,7 @@
                     <ion-title>Login</ion-title>
                 </ion-toolbar>
             </ion-header>
+
             <ion-content class="ion-padding">
                 <h1>Login</h1>
                 <ion-input label="Nombre de usuario" id="txtNombreUsuario"></ion-input>
@@ -74,22 +94,34 @@
                 <ion-input label="Password" id="txtPasswordRegistro" type="password"></ion-input>
                 <ion-input label="Codigo Pais" id="txtCodigoPaisRegistro" type="number"></ion-input>
                 <ion-button id="btRegistro">Registrarse</ion-button>
-
-
             </ion-content>
         </ion-page>
+
+        <!-- Mapa -->
+        <ion-page class="ion-page" id="page-mapa">
+            <ion-header>
+                <ion-toolbar>
+                    <ion-buttons slot="start">
+                        <ion-menu-button></ion-menu-button>
+                    </ion-buttons>
+                    <ion-title>Mapa</ion-title>
+                </ion-toolbar>
+            </ion-header>
+
+            <ion-content class="ion-padding">
+                <h1>Mapa</h1>
+                <div id="mapa" style="height: 60vh;"></div>
+            </ion-content>
+
+        </ion-page>
+
+
     </ion-app>
 
-    <input type="button" id="btnProductos" value="Listar Productos" />
-</body>
-
-</html>
+    <!--     <input type="button" id="btnProductos" value="Listar Productos" /> -->
 
 
-
-
-
-<script src="JS/codigo.js"></script>
+    <script src="JS/codigo.js"></script>
 </body>
 
 </html>

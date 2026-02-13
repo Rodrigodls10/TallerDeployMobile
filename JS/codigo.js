@@ -1,142 +1,67 @@
-/* document.querySelector("#btnRegistro").addEventListener("click", registroVersionAwait);
-
-document.querySelector("#btnLogin").addEventListener("click", loginVersionAwait);
-
-async function registroVersionAwait() {
-
-    let nombre = document.querySelector("#txtNombre").value;
-    let apellido = document.querySelector("#txtApellido").value;
-    let email = document.querySelector("#txtEmail").value;
-    let direccion = document.querySelector("#txtDireccion").value;
-    let pass = document.querySelector("#txtPass").value;
-
-    if (nombre && apellido && email && direccion && pass) {
-
-        let response = await fetch("https://ort-tallermoviles.herokuapp.com/api/usuarios", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                nombre: nombre,
-                apellido: apellido,
-                email: email,
-                direccion: direccion,
-                password: pass
-            })
-        });
-
-        let data = await response.json(); // esperamos la respuesta como dijiste profe
-
-        if (response.ok) {
-            mostrarMensaje("Registro exitoso");
-        } else {
-            mostrarMensaje(data.error || "Error en registro");
-        }
-
-    } else {
-        mostrarMensaje("Complete todos los datos");
-    }
-}
-
-
-
-async function loginVersionAwait() {
-
-    let email = document.querySelector("#txtEmailLogin").value;
-    let pass = document.querySelector("#txtPassLogin").value;
-
-    if (email && pass) {
-
-        let response = await fetch("https://ort-tallermoviles.herokuapp.com/api/usuarios/session", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                email: email,
-                password: pass
-            })
-        });
-
-        let data = await response.json();
-
-        if (response.ok) {
-            mostrarMensaje("Login correcto");
-            console.log(data);
-        } else {
-            mostrarMensaje(data.error || "Login incorrecto");
-        }
-
-    } else {
-        mostrarMensaje("Complete los datos");
-    }
-}
-
-
-function mostrarMensaje(msg) {
-    document.querySelector("#mensaje").innerText = msg;
-}
-
- */
-
-
-
-//Ejercicio con ionic
-
-const urlBase = "https://movielist.develotion.com"
+const urlBase = "https://movielist.develotion.com";
 const ruteo = document.querySelector("#ruteo");
 const menu = document.querySelector("#menu");
+
+let map = null;
 
 inicio();
 
 function inicio() {
-    agregarEventos();
-}
+  ruteo.addEventListener("ionRouteWillChange", navegar);
+  document.querySelector("#btnLogin").addEventListener("click", login);
+  document.querySelector("#btRegistro").addEventListener("click", registrarUsuario);
 
-function agregarEventos() {
-    ruteo.addEventListener("ionRouteWillChange", navegar);
-    document.querySelector("#btnLogin").addEventListener("click", login);
-    document.querySelector("#btnProductos").addEventListener("click", obtenerProductos);
+  // si NO existe btnProductos, no rompe
+  const btnProd = document.querySelector("#btnProductos");
+  if (btnProd) btnProd.addEventListener("click", obtenerProductos);
 }
 
 function cerrarMenu() {
-    menu.close();
+  menu.close();
 }
-
-//Funcion navegar
 
 function navegar(evt) {
-    let paginaDestino = evt.detail.to;
-    ocultarPaginas();
-    switch (paginaDestino) {
-        case "/":
-            document.querySelector("#page-home").style.display = "block";
-            break;
-        default:
-            document.querySelector("#page-login").style.display = "block";
-            break;
-    }
+  let paginaDestino = evt.detail.to;
+  ocultarPaginas();
+
+  switch (paginaDestino) {
+    case "/":
+      document.querySelector("#page-home").style.display = "block";
+      break;
+
+    case "/login":
+      document.querySelector("#page-login").style.display = "block";
+      break;
+
+    case "/mapa":
+      document.querySelector("#page-mapa").style.display = "block";
+      setTimeout(() => inicializarMapa(), 200);
+      break;
+
+    default:
+      document.querySelector("#page-login").style.display = "block";
+      break;
+  }
 }
 
+// DEJADA COMO LA TENÍAS
 function ocultarPaginas() {
-    let paginas = document.querySelectorAll(".ion-page");
-    for (let i = 1; i < paginas.length; i++) {
-        paginas[i].style.display = "none";
-    }
-
+  let paginas = document.querySelectorAll(".ion-page");
+  for (let i = 1; i < paginas.length; i++) {
+    paginas[i].style.display = "none";
+  }
 }
 
 function mostrarMensaje(mensaje) {
-    let toast = document.createElement("ion-toast");
-    toast.duration = 1500;
-    toast.message = mensaje;
-    toast.position = "bottom";
-    document.body.append(toast);
-    toast.present();
+  let toast = document.createElement("ion-toast");
+  toast.duration = 1500;
+  toast.message = mensaje;
+  toast.position = "bottom";
+  document.body.append(toast);
+  toast.present();
 }
 
-// Login
+// LOGIN (igual)
 async function login() {
   try {
     const usuario = document.querySelector("#txtNombreUsuario").value;
@@ -161,83 +86,79 @@ async function login() {
     } else {
       mostrarMensaje(data.error || data.message || "Credenciales inválidas");
     }
-
   } catch (error) {
-    console.log("ERROR EN LOGIN:", error);
     mostrarMensaje("Error de conexión");
   }
 }
 
-
-
-
-//Obtener productos
-
+// PRODUCTOS (igual)
 async function obtenerProductos() {
-    try {
-        let token = localStorage.getItem("token");
-        if (token) {
-            let response = await fetch(`${urlBase}/productos`, {
-                headers: {
-                    "Content-Type": "application/json",
-                    "x-auth": token,
-                },
-            });
-            let datosProductos = await response.json();
-            if (response.status == 401) {
-                console.log("Debes iniciar sesiòn nuevamente");
-            } else {
-                console.log(datosProductos.data);
-            }
-        }
-        else {
-            console.log("Debes iniciar sesión");
-        }
-    } catch (error) { }
-}
-
-
-
-//Reguistro de usuario
-
-document.querySelector("#btRegistro").addEventListener("click", registrarUsuario);
-
-async function registrarUsuario() {
-    try {
-        const usuario = document.querySelector("#txtUsuarioRegistro").value;
-        const password = document.querySelector("#txtPasswordRegistro").value;
-        const codigoPais = document.querySelector("#txtCodigoPaisRegistro").value;
-
-        if (!usuario || !password || !codigoPais) {
-            mostrarMensaje("Todos los campos son obligatorios");
-            return;
-        }
-
-        const response = await fetch(`${urlBase}/usuarios`, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
-                usuario: usuario,
-                password: password,
-                codigoPais: codigoPais
-            })
-        });
-
-        const data = await response.json();
-
-        if (response.ok) {
-            mostrarMensaje("Usuario registrado correctamente");
-            console.log(data);
-        } else {
-            mostrarMensaje(data.error || "Error al registrar");
-        }
-
-    } catch (error) {
-        console.error(error);
-        mostrarMensaje("Error de conexión");
+  try {
+    let token = localStorage.getItem("token");
+    if (token) {
+      let response = await fetch(`${urlBase}/productos`, {
+        headers: {
+          "Content-Type": "application/json",
+          "x-auth": token,
+        },
+      });
+      let datosProductos = await response.json();
+      if (response.status == 401) {
+        console.log("Debes iniciar sesiòn nuevamente");
+      } else {
+        console.log(datosProductos.data);
+      }
+    } else {
+      console.log("Debes iniciar sesión");
     }
+  } catch (error) {}
 }
 
+// REGISTRO (igual)
+async function registrarUsuario() {
+  try {
+    const usuario = document.querySelector("#txtUsuarioRegistro").value;
+    const password = document.querySelector("#txtPasswordRegistro").value;
+    const codigoPais = document.querySelector("#txtCodigoPaisRegistro").value;
 
+    if (!usuario || !password || !codigoPais) {
+      mostrarMensaje("Todos los campos son obligatorios");
+      return;
+    }
+
+    const response = await fetch(`${urlBase}/usuarios`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ usuario, password, codigoPais }),
+    });
+
+    const data = await response.json();
+
+    if (response.ok) {
+      mostrarMensaje("Usuario registrado correctamente");
+    } else {
+      mostrarMensaje(data.error || "Error al registrar");
+    }
+  } catch (error) {
+    mostrarMensaje("Error de conexión");
+  }
+}
+
+// MAPA (lo mínimo para que cargue)
+function inicializarMapa() {
+  navigator.geolocation.getCurrentPosition((pos) => {
+    const lat = pos.coords.latitude;
+    const lon = pos.coords.longitude;
+
+    if (!map) {
+      map = L.map("mapa").setView([lat, lon], 15);
+      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+        maxZoom: 19,
+      }).addTo(map);
+      L.marker([lat, lon]).addTo(map).bindPopup("Mi ubicación").openPopup();
+    } else {
+      map.invalidateSize();
+      map.setView([lat, lon], 15);
+    }
+  });
+}
