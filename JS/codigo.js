@@ -11,7 +11,6 @@ function inicio() {
   document.querySelector("#btnLogin").addEventListener("click", login);
   document.querySelector("#btRegistro").addEventListener("click", registrarUsuario);
 
-  // si NO existe btnProductos, no rompe
   const btnProd = document.querySelector("#btnProductos");
   if (btnProd) btnProd.addEventListener("click", obtenerProductos);
 }
@@ -44,7 +43,6 @@ function navegar(evt) {
   }
 }
 
-// DEJADA COMO LA TENÍAS
 function ocultarPaginas() {
   let paginas = document.querySelectorAll(".ion-page");
   for (let i = 1; i < paginas.length; i++) {
@@ -61,7 +59,7 @@ function mostrarMensaje(mensaje) {
   toast.present();
 }
 
-// LOGIN (igual)
+// LOGIN
 async function login() {
   try {
     const usuario = document.querySelector("#txtNombreUsuario").value;
@@ -91,7 +89,7 @@ async function login() {
   }
 }
 
-// PRODUCTOS (igual)
+// PRODUCTOS
 async function obtenerProductos() {
   try {
     let token = localStorage.getItem("token");
@@ -114,7 +112,7 @@ async function obtenerProductos() {
   } catch (error) {}
 }
 
-// REGISTRO (igual)
+// REGISTRO
 async function registrarUsuario() {
   try {
     const usuario = document.querySelector("#txtUsuarioRegistro").value;
@@ -144,7 +142,7 @@ async function registrarUsuario() {
   }
 }
 
-// MAPA (lo mínimo para que cargue)
+// MAPA
 function inicializarMapa() {
   navigator.geolocation.getCurrentPosition((pos) => {
     const lat = pos.coords.latitude;
