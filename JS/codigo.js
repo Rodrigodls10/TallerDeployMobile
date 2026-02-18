@@ -10,6 +10,7 @@ function inicio() {
   ruteo.addEventListener("ionRouteWillChange", navegar);
   document.querySelector("#btnLogin").addEventListener("click", login);
   document.querySelector("#btRegistro").addEventListener("click", registrarUsuario);
+  actualizarUsuarioMenu();
 }
 
 function cerrarMenu() {
@@ -37,6 +38,7 @@ function navegar(evt) {
 
     case "/registro":
       document.querySelector("#page-registro").style.display = "block";
+      cargarPaises();
       break;
 
     default:
@@ -82,6 +84,8 @@ async function login() {
 
     if (response.ok && data.token) {
       localStorage.setItem("token", data.token);
+      localStorage.setItem("usuario", usuario); //Guardo para mosrar
+      actualizarUsuarioMenu();
       mostrarMensaje("Login OK");
     } else {
       mostrarMensaje(data.error || data.message || "Credenciales inválidas");
@@ -91,12 +95,32 @@ async function login() {
   }
 }
 
+function estaLogueado() {
+  if (localStorage.getItem("token")) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function actualizarUsuarioMenu() {
+  const p = document.querySelector("#txtUsuarioLogueado");
+  const user = localStorage.getItem("usuario");
+
+  p.textContent = user ? `Usuario: ${user}` : "No logueado";
+}
+
+
+
+
 //LOGOUT
 document.querySelector("#btnCerrarSesion").addEventListener("click", cerrarSesion)
 
 function cerrarSesion() {
   localStorage.removeItem("token");
-  mostrarMensaje("Se cerro la sesion")
+  localStorage.removeItem("usuario");
+  actualizarUsuarioMenu();
+  mostrarMensaje("Se cerró la sesión");
 }
 
 
@@ -159,7 +183,7 @@ async function registrarUsuario() {
   try {
     const usuario = document.querySelector("#txtUsuarioRegistro").value;
     const password = document.querySelector("#txtPasswordRegistro").value;
-    const codigoPais = document.querySelector("#txtCodigoPaisRegistro").value;
+    const codigoPais = document.querySelector("#slcPaisRegistro").value;
 
     if (!usuario || !password || !codigoPais) {
       mostrarMensaje("Todos los campos son obligatorios");
@@ -184,6 +208,29 @@ async function registrarUsuario() {
   }
 }
 
+async function cargarPaises() {
+  try {
+    const response = await fetch(`${urlBase}/paises`, {
+      headers: { "Content-Type": "application/json" }
+    });
+
+    const data = await response.json();
+
+    // ajustar segun respuesta
+    const paises = data.paises || data.data?.paises || data.data || [];
+
+    const slc = document.querySelector("#slcPaisRegistro");
+    slc.innerHTML = "";
+
+    paises.forEach(p => {
+      slc.innerHTML += `<ion-select-option value="${p.id}">${p.nombre}</ion-select-option>`;
+    });
+  } catch (e) {
+    mostrarMensaje("No se pudieron cargar los países");
+  }
+}
+
+
 // MAPA
 function inicializarMapa() {
   navigator.geolocation.getCurrentPosition((pos) => {
@@ -195,7 +242,7 @@ function inicializarMapa() {
       L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
         maxZoom: 19,
       }).addTo(map);
-      L.marker([lat, lon]).addTo(map).bindPopup("Mi ubicación").openPopup();
+      L.marker([lat, lon]).addTo(map).bindPopup("Mi ubicacion").openPopup();
     } else {
       map.invalidateSize();
       map.setView([lat, lon], 15);

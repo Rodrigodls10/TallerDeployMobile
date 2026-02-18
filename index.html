@@ -39,6 +39,9 @@
             </ion-header>
 
             <ion-content class="ion-padding">
+                
+                <p id="txtUsuarioLogueado">No logueado</p>
+
                 <ion-list>
                     <ion-item href="/" onclick="cerrarMenu()">
                         <ion-icon name="home-outline" slot="end"></ion-icon>
@@ -139,7 +142,7 @@
                 <h1>Registrarse</h1>
                 <ion-input label="Nombre de usuario" id="txtUsuarioRegistro"></ion-input>
                 <ion-input label="Password" id="txtPasswordRegistro" type="password"></ion-input>
-                <ion-input label="Codigo Pais" id="txtCodigoPaisRegistro" type="number"></ion-input>
+                <ion-select label="País" id="slcPaisRegistro"></ion-select>
                 <ion-button id="btRegistro">Registrarse</ion-button>
             </ion-content>
         </ion-page>
