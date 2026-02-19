@@ -1,0 +1,68 @@
+/* HOME: aire abajo para que no se corte el último botón */
+.home-content {
+  --padding-bottom: 90px;
+}
+
+/* contenedor pro */
+#contenedorPeliculas {
+  margin-top: 12px;
+}
+
+/* card pro */
+.movie-card {
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 14px 0;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+/* imagen */
+.movie-img-wrap {
+  position: relative;
+}
+
+.movie-img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  display: block;
+}
+
+/* chips sobre la imagen */
+.movie-badges {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.movie-chip {
+  backdrop-filter: blur(6px);
+  background: rgba(255, 255, 255, 0.85);
+}
+
+/* header */
+.movie-header {
+  padding-top: 12px;
+}
+
+.movie-title {
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.movie-subtitle {
+  margin-top: 6px;
+  font-size: 13px;
+}
+
+/* acciones */
+.movie-actions {
+  padding-top: 8px;
+}
+
+.movie-btn {
+  margin-top: 6px;
+}
