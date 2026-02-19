@@ -290,75 +290,52 @@ document.querySelector("#btCargarPelicula").addEventListener("click", cargarPeli
 
 async function cargarPelicula() {
 
-  let nombre = document.querySelector("#txtNombrePelicula").value;
-  let idCategoria = document.querySelector("#slcCategoriaPelicula").value;
-  let fecha = document.querySelector("#dtFechaPelicula").value;
-  let comentario = document.querySelector("#txtComentario").value;
-  let token = localStorage.getItem("token");
+  const nombre = document.querySelector("#txtNombrePelicula").value;
+  const idCategoria = document.querySelector("#slcCategoriaPelicula").value;
+  const fecha = document.querySelector("#dtFechaPelicula").value;
+  const comentario = document.querySelector("#txtComentario").value;
 
-  if (nombre == "" || idCategoria == "" || fecha == "" || comentario == "") {
-    mostrarMensaje("Se deben completar todos los campos");
+  const token = localStorage.getItem("token");
+
+  if (!nombre || !idCategoria || !fecha || !comentario) {
+    mostrarMensaje("Todos los campos son obligatorios");
     return;
   }
 
-  // Validacion fecha
-  let hoy = new Date();
-  let fechaIngresada = new Date(fecha);
+  // Analizar comentario
+  const responseIA = await fetch(`${urlBase}/genai`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({ texto: comentario })
+  });
 
-  if (fechaIngresada > hoy) {
-    mostrarMensaje("Debe ingresar una fecha valida");
+  const dataIA = await responseIA.json();
+
+  if (dataIA.sentiment == "Negativo") {
+    mostrarMensaje("Comentario negativo. No se registra la película.");
     return;
   }
 
-  try {
+  // Si el comentario es positivo
+  const responsePelicula = await fetch(`${urlBase}/peliculas`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "Bearer " + token
+    },
+    body: JSON.stringify({
+      nombre: nombre,
+      idCategoria: idCategoria,
+      fechaVisualizacion: fecha
+    })
+  });
 
-    // Pasar comentario a la ia
-    let responseSent = await fetch(urlBase + "/genai", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify({
-        comentario: comentario
-      })
-    });
-
-    let dataSent = await responseSent.json();
-
-    if (!responseSent.ok) {
-      mostrarMensaje("Error al analizar comentario");
-      return;
-    }
-
-    // Negativo
-    if (dataSent.sentimiento == "negativo") {
-      mostrarMensaje("No se puede registrar. Comentario negativo.");
-      return;
-    }
-
-    let responseAlta = await fetch(urlBase + "/peliculas", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": "Bearer " + token
-      },
-      body: JSON.stringify({
-        nombre: nombre,
-        idCategoria: idCategoria,
-        fecha: fecha
-      })
-    });
-
-    let dataAlta = await responseAlta.json();
-
-    if (responseAlta.ok) {
-      mostrarMensaje("Película registrada correctamente");
-    } else {
-      mostrarMensaje("No se pudo registrar la película");
-    }
-
-  } catch (error) {
-    mostrarMensaje("Error de conexión");
+  if (responsePelicula.ok) {
+    mostrarMensaje("Película registrada correctamente");
+  } else {
+    mostrarMensaje("Error al registrar película");
   }
 }
