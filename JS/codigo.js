@@ -27,6 +27,11 @@ function navegar(evt) {
       obtenerPeliculas();
       break;
 
+    case "/cargarPelicula":
+      document.querySelector("#page-cargarPelicula").style.display = "block";
+      cargarCategorias();
+      break;
+
     case "/mapa":
       document.querySelector("#page-mapa").style.display = "block";
       setTimeout(() => inicializarMapa(), 200);
@@ -215,8 +220,6 @@ async function cargarPaises() {
     });
 
     const data = await response.json();
-
-    // ajustar segun respuesta
     const paises = data.paises || data.data?.paises || data.data || [];
 
     const slc = document.querySelector("#slcPaisRegistro");
@@ -248,4 +251,114 @@ function inicializarMapa() {
       map.setView([lat, lon], 15);
     }
   });
+}
+
+
+// CARGAR PELICULAS
+
+async function cargarCategorias() {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch(`${urlBase}/categorias`, {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}`
+      }
+    });
+
+    const data = await response.json();
+    const categorias = data.categorias || [];
+
+    const slc = document.querySelector("#slcCategoriaPelicula");
+    slc.innerHTML = "";
+
+    categorias.forEach(c => {
+      slc.innerHTML += `
+        <ion-select-option value="${c.id}">
+          ${c.nombre} ${c.emoji}
+        </ion-select-option>`;
+    });
+
+  } catch (e) {
+    mostrarMensaje("No se encontraron categorias");
+  }
+}
+
+
+document.querySelector("#btCargarPelicula").addEventListener("click", cargarPelicula);
+
+async function cargarPelicula() {
+
+  let nombre = document.querySelector("#txtNombrePelicula").value;
+  let idCategoria = document.querySelector("#slcCategoriaPelicula").value;
+  let fecha = document.querySelector("#dtFechaPelicula").value;
+  let comentario = document.querySelector("#txtComentario").value;
+  let token = localStorage.getItem("token");
+
+  if (nombre == "" || idCategoria == "" || fecha == "" || comentario == "") {
+    mostrarMensaje("Se deben completar todos los campos");
+    return;
+  }
+
+  // Validacion fecha
+  let hoy = new Date();
+  let fechaIngresada = new Date(fecha);
+
+  if (fechaIngresada > hoy) {
+    mostrarMensaje("Debe ingresar una fecha valida");
+    return;
+  }
+
+  try {
+
+    // Pasar comentario a la ia
+    let responseSent = await fetch(urlBase + "/genai", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({
+        comentario: comentario
+      })
+    });
+
+    let dataSent = await responseSent.json();
+
+    if (!responseSent.ok) {
+      mostrarMensaje("Error al analizar comentario");
+      return;
+    }
+
+    // Negativo
+    if (dataSent.sentimiento == "negativo") {
+      mostrarMensaje("No se puede registrar. Comentario negativo.");
+      return;
+    }
+
+    let responseAlta = await fetch(urlBase + "/peliculas", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      },
+      body: JSON.stringify({
+        nombre: nombre,
+        idCategoria: idCategoria,
+        fecha: fecha
+      })
+    });
+
+    let dataAlta = await responseAlta.json();
+
+    if (responseAlta.ok) {
+      mostrarMensaje("Película registrada correctamente");
+    } else {
+      mostrarMensaje("No se pudo registrar la película");
+    }
+
+  } catch (error) {
+    mostrarMensaje("Error de conexión");
+  }
 }
