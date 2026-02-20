@@ -9,7 +9,17 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-    <style>.boton-derecha {text-align: right;}.btn-cuadrado {width: 60px;height: 60px;padding: 0;}</style>
+    <style>
+        .boton-derecha {
+            text-align: right;
+        }
+
+        .btn-cuadrado {
+            width: 60px;
+            height: 60px;
+            padding: 0;
+        }
+    </style>
     <link rel="stylesheet" href="css/estilos.css" />
 
 
@@ -26,6 +36,7 @@
             <ion-route url="/registro" component="page-registro"></ion-route>
             <ion-route url="/mapa" component="page-mapa"></ion-route>
             <ion-route url="/cargarPelicula" component="page-cargarPelicula"></ion-route>
+            <ion-route url="/estadisticas" component="page-estadisticas"></ion-route>
         </ion-router>
 
         <!-- Nav -->
@@ -60,6 +71,11 @@
                     <ion-item id="itemMapa" href="/mapa" onclick="cerrarMenu()">
                         <ion-icon name="map-outline" slot="end"></ion-icon>
                         <ion-label>Mapa</ion-label>
+                    </ion-item>
+
+                    <ion-item id="itemStats" href="/estadisticas" onclick="cerrarMenu()">
+                        <ion-icon name="stats-chart-outline" slot="end"></ion-icon>
+                        <ion-label>Estadisticas</ion-label>
                     </ion-item>
 
                     <ion-item id="itemLogin" href="/login" onclick="cerrarMenu()">
@@ -130,6 +146,25 @@
             </ion-content>
         </ion-page>
 
+        <!-- Estadisticas -->
+        <ion-page class="ion-page" id="page-estadisticas">
+            <ion-header>
+                <ion-toolbar>
+                    <ion-buttons slot="start">
+                        <ion-menu-button></ion-menu-button>
+                    </ion-buttons>
+                    <ion-title>Estadisticas</ion-title>
+                </ion-toolbar>
+            </ion-header>
+
+            <ion-content class="ion-padding">
+                <h1>Datos</h1>
+                <div id="contenedorEstadisticas"></div>
+                <div id="contenedorPorcentajes"></div>
+            </ion-content>
+            
+        </ion-page>
+
         <!-- Mapa -->
         <ion-page class="ion-page" id="page-mapa">
             <ion-header>
@@ -168,7 +203,7 @@
                 <!-- Prueba para registro -->
 
                 <br>
-<!--                 <ion-button id="btnCerrarSesion">Cerrar Sesion</ion-button>
+                <!--                 <ion-button id="btnCerrarSesion">Cerrar Sesion</ion-button>
  -->
 
             </ion-content>

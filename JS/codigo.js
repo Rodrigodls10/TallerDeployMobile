@@ -52,6 +52,11 @@ function navegar(evt) {
       setTimeout(() => inicializarMapa(), 200);
       break;
 
+    case "/estadisticas":
+      document.querySelector("#page-estadisticas").style.display = "block";
+      cargarEstadisticas();
+      break;
+
     case "/login":
       document.querySelector("#page-login").style.display = "block";
       break;
@@ -157,7 +162,7 @@ function actualizarUsuarioMenu() {
 }
 
 //LOGOUT
-document.querySelector("#btnCerrarSesion").addEventListener("click", cerrarSesion)
+//document.querySelector("#btnCerrarSesion").addEventListener("click", cerrarSesion)
 
 function cerrarSesion() {
   localStorage.removeItem("token");
@@ -568,6 +573,133 @@ async function eliminarPelicula(id) {
     mostrarMensaje("Error de conexión");
   }
 }
+
+//Estadisticas
+async function cargarEstadisticas() {
+  try {
+    let token = localStorage.getItem("token");
+    if (token == null) {
+      mostrarMensaje("Debes iniciar sesión");
+      return;
+    }
+
+    // Peliculas
+    let respPel = await fetch(urlBase + "/peliculas", {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    // Categorias
+    let respCat = await fetch(urlBase + "/categorias", {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if (respPel.status == 401 || respCat.status == 401) {
+      mostrarMensaje("Sesión vencida");
+      localStorage.removeItem("token");
+      return;
+    }
+
+    let dataPel = await respPel.json();
+    let dataCat = await respCat.json();
+
+    let peliculas = dataPel.peliculas;
+    if (peliculas == null) peliculas = [];
+
+    let categorias = dataCat.categorias;
+    if (categorias == null) categorias = [];
+
+    mostrarCantidadPorCategoria(peliculas, categorias);
+    mostrarPorcentajeMayores12(peliculas, categorias);
+  } catch (e) {
+    mostrarMensaje("No se pudieron cargar estadisticas");
+  }
+}
+
+function mostrarCantidadPorCategoria(peliculas, categorias) {
+  let contenedor = document.querySelector("#contenedorEstadisticas");
+  contenedor.innerHTML = "";
+
+  for (let i = 0; i < categorias.length; i++) {
+    let cat = categorias[i];
+    let contador = 0;
+
+    for (let j = 0; j < peliculas.length; j++) {
+      if (peliculas[j].idCategoria == cat.id) {
+        contador++;
+      }
+    }
+
+    contenedor.innerHTML +=
+    `
+      <ion-item>
+        <ion-label>${cat.emoji} ${cat.nombre}</ion-label>
+        <ion-badge slot="end">${contador}</ion-badge>
+      </ion-item>
+    `;
+  }
+}
+
+function mostrarPorcentajeMayores12(peliculas, categorias) {
+  let cont = document.querySelector("#contenedorPorcentajes");
+  cont.innerHTML = "";
+
+  let edadPorCategoria = {};
+  for (let i = 0; i < categorias.length; i++) {
+    edadPorCategoria[categorias[i].id] = categorias[i].edad_requerida;
+  }
+
+  let total = peliculas.length;
+  let mayores12 = 0;
+  let resto = 0;
+
+  for (let i = 0; i < peliculas.length; i++) {
+    let idCat = peliculas[i].idCategoria;
+    let edad = edadPorCategoria[idCat];
+
+    if (edad >= 12) {
+      mayores12++;
+    } else {
+      resto++;
+    }
+  }
+
+  let porcMayores12 = 0;
+  let porcResto = 0;
+
+  if (total > 0) {
+    porcMayores12 = (mayores12 * 100) / total;
+    porcResto = (resto * 100) / total;
+  }
+
+  porcMayores12 = Math.round(porcMayores12);
+  porcResto = Math.round(porcResto);
+
+  cont.innerHTML = `
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Porcentajes</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <p>Mayores de 12: ${porcMayores12}% (${mayores12})</p>
+        <p>Resto: ${porcResto}% (${resto})</p>
+      </ion-card-content>
+    </ion-card>
+  `;
+}
+
+
+
+
+
+
+
+
 
 /* function aplicarFiltroFecha() {
   let slc = document.querySelector("#slcFiltroFecha");
