@@ -9,6 +9,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@ionic/core/css/ionic.bundle.css" />
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>.boton-derecha {text-align: right;}.btn-cuadrado {width: 60px;height: 60px;padding: 0;}</style>
     <link rel="stylesheet" href="css/estilos.css" />
 
 
@@ -92,11 +93,11 @@
                 </ion-toolbar>
             </ion-header>
 
-<ion-content class="ion-padding home-content">
+            <ion-content class="ion-padding home-content">
                 <h1>Inicio</h1>
                 <ion-item>
                     <ion-label>Filtro</ion-label>
-                    <ion-select id="slcFiltroFecha" value="todas">
+                    <ion-select id="slcFiltroFecha">
                         <ion-select-option value="todas">Todas</ion-select-option>
                         <ion-select-option value="semana">Última semana</ion-select-option>
                         <ion-select-option value="mes">Último mes</ion-select-option>
@@ -167,8 +168,8 @@
                 <!-- Prueba para registro -->
 
                 <br>
-                <ion-button id="btnCerrarSesion">Cerrar Sesion</ion-button>
-
+<!--                 <ion-button id="btnCerrarSesion">Cerrar Sesion</ion-button>
+ -->
 
             </ion-content>
         </ion-page>
