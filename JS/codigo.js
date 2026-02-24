@@ -420,24 +420,106 @@ async function cargarPaises() {
   }
 }
 
-// MAPA
-function inicializarMapa() {
-  navigator.geolocation.getCurrentPosition((pos) => {
-    const lat = pos.coords.latitude;
-    const lon = pos.coords.longitude;
+//MAPA
 
-    if (!map) {
-      map = L.map("mapa").setView([lat, lon], 15);
-      L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-        maxZoom: 19,
-      }).addTo(map);
-      L.marker([lat, lon]).addTo(map).bindPopup("Mi ubicacion").openPopup();
-    } else {
-      map.invalidateSize();
-      map.setView([lat, lon], 15);
-    }
-  });
+let markersGroup = null;
+
+function inicializarMapa() {
+  if (map != null) {
+    map.invalidateSize();
+    cargarMarkersUsuariosPorPais();
+    return;
+  }
+
+  map = L.map("mapa").setView([-20, -60], 3);
+
+  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+    maxZoom: 19
+  }).addTo(map);
+
+  markersGroup = L.layerGroup().addTo(map);
+
+  cargarMarkersUsuariosPorPais();
 }
+
+async function cargarMarkersUsuariosPorPais() {
+  try {
+    let token = localStorage.getItem("token");
+    if (token == null) {
+      mostrarMensaje("Debes iniciar sesión");
+      return;
+    }
+
+    let respPaises = await fetch(urlBase + "/paises", {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    let respUsuarios = await fetch(urlBase + "/usuariosPorPais", {
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": "Bearer " + token
+      }
+    });
+
+    if (respPaises.status == 401 || respUsuarios.status == 401) {
+      mostrarMensaje("Sesión vencida");
+      localStorage.removeItem("token");
+      return;
+    }
+
+    let dataPaises = await respPaises.json();
+    let dataUsuarios = await respUsuarios.json();
+
+    let paises = dataPaises.paises;
+    if (paises == null) paises = [];
+
+    let usuariosPorPais = dataUsuarios.paises;
+    if (usuariosPorPais == null) usuariosPorPais = [];
+
+    markersGroup.clearLayers();
+
+    let bounds = [];
+
+    for (let i = 0; i < paises.length; i++) {
+      let p = paises[i];
+
+      let cantidad = 0;
+      for (let j = 0; j < usuariosPorPais.length; j++) {
+        if (usuariosPorPais[j].id == p.id) {
+          cantidad = usuariosPorPais[j].cantidadDeUsuarios;
+        }
+      }
+
+      let marker = L.marker([p.latitud, p.longitud]).addTo(markersGroup);
+      marker.bindTooltip(p.nombre + ": " + cantidad + " usuarios");
+
+      bounds.push([p.latitud, p.longitud]);
+    }
+
+    if (bounds.length > 0) {
+      map.fitBounds(bounds);
+    }
+
+  } catch (e) {
+    mostrarMensaje("No se pudo cargar el mapa");
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // CARGAR PELICULAS
 async function cargarCategorias() {
@@ -600,7 +682,8 @@ async function cargarEstadisticas() {
     });
 
     if (respPel.status == 401 || respCat.status == 401) {
-      mostrarMensaje("Sesión vencida");
+      mostrarMensaje("Sesion vencida");
+      ruteo.push("/login")
       localStorage.removeItem("token");
       return;
     }
