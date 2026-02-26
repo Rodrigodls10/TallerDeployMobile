@@ -1,0 +1,25 @@
+{
+  "name": "www",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/Rodrigodls10/TallerDeployMobile#readme",
+  "bugs": {
+    "url": "https://github.com/Rodrigodls10/TallerDeployMobile/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Rodrigodls10/TallerDeployMobile.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "commonjs",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@capacitor/android": "^8.1.0",
+    "@capacitor/cli": "^8.1.0",
+    "@capacitor/core": "^8.1.0"
+  }
+}
