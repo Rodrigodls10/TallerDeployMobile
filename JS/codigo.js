@@ -134,27 +134,34 @@ function actualizarUsuarioMenu() {
   const user = localStorage.getItem("usuario");
   const token = localStorage.getItem("token");
 
+  const itemInicio = document.querySelector("#itemInicio");        
   const itemCargar = document.querySelector("#itemCargarPelicula");
   const itemMapa = document.querySelector("#itemMapa");
   const itemLogin = document.querySelector("#itemLogin");
+  const itemStats = document.querySelector("#itemStats");
   const itemRegistro = document.querySelector("#itemRegistro");
   const itemLogout = document.querySelector("#itemLogout");
 
   if (token && user) {
     p.textContent = `Usuario: ${user}`;
 
+    itemInicio.style.display = "block";   
     itemCargar.style.display = "block";
     itemMapa.style.display = "block";
     itemLogout.style.display = "block";
+    itemStats.style.display = "block";
+
 
     itemLogin.style.display = "none";
     itemRegistro.style.display = "none";
   } else {
     p.textContent = "No logueado";
-
+    itemInicio.style.display = "none";    
     itemCargar.style.display = "none";
     itemMapa.style.display = "none";
     itemLogout.style.display = "none";
+    itemStats.style.display = "none";
+
 
     itemLogin.style.display = "block";
     itemRegistro.style.display = "block";
@@ -719,7 +726,7 @@ function mostrarCantidadPorCategoria(peliculas, categorias) {
     }
 
     contenedor.innerHTML +=
-    `
+      `
       <ion-item>
         <ion-label>${cat.emoji} ${cat.nombre}</ion-label>
         <ion-badge slot="end">${contador}</ion-badge>
