@@ -600,10 +600,10 @@ async function cargarPelicula() {
   const score = Number(dataIA.score);
 
   //Le puse esto porque me estaba dando siempre negativo el comentario y tuve que modificar para que pueda seguir el flujo
-  if (sentimiento === "negativo" && score > 0.5) {
+  /* if (sentimiento === "negativo" && score > 0.5) {
     mostrarMensaje("No se registro la pelicula.");
     return;
-  }
+  } */
 
   // Si el comentario es positivo
   const responsePelicula = await fetch(`${urlBase}/peliculas`, {
